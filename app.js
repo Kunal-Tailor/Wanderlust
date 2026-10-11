@@ -15,16 +15,20 @@ const reviewRouter = require("./routes/review.js");
 
 const dbUrl = process.env.ATLASDB_URL || process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
-main()
-  .then(() => {
-    console.log("Connected to DB");
-  })
-  .catch((err) => {
-    console.log("Database connection error:", err);
+async function connectToDatabase() {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
+  if (process.env.VERCEL && (!process.env.ATLASDB_URL && !process.env.MONGO_URL)) {
+    throw new ExpressError(
+      500,
+      "MongoDB Atlas URL is missing! Please add 'ATLASDB_URL' in Vercel Project Settings -> Environment Variables."
+    );
+  }
+  await mongoose.connect(dbUrl, {
+    serverSelectionTimeoutMS: 5000,
   });
-
-async function main() {
-  await mongoose.connect(dbUrl);
+  console.log("Connected to DB");
 }
 
 // App configuration
@@ -34,6 +38,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
+
+// Ensure DB connection before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Pass mapToken to all views
 app.use((req, res, next) => {

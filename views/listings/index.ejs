@@ -1,27 +1,123 @@
 <% layout("/layouts/boilerplate.ejs")%>
-  <body>
-    <h3>All Listings</h3>
-    <!-- <form method="GET" action="/listings/new">
-      <button>Create New Listing</button>
-    </form> -->
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
-      <% for(let listing of allListings) { %>
-        <a href="/listings/<%=listing._id %>" class="listing-link">
-        <div class="card col">
-          <img src="<%=listing.image%>" class="card-img-top" alt="listing_image" style="height: 20rem">
-          <div class="card-img-overlay"></div>
-          <div class="card-body">
-            <p class="card-text">
-              <b><%= listing.title %></b><br>
-              &#8377; <%= listing.price.toLocaleString("en-IN") %> /night
-            </p>
+
+<!-- Categories Filter Bar -->
+<div class="filters-container mb-4 pb-2 border-bottom">
+  <div class="d-flex align-items-center gap-4 overflow-x-auto py-2 filter-scroll">
+    <a href="/listings" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Trending' ? 'active' : '' %>">
+        <i class="fa-solid fa-fire"></i>
+        <p class="mb-0 small">Trending</p>
+      </div>
+    </a>
+    <a href="/listings?category=Rooms" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Rooms' ? 'active' : '' %>">
+        <i class="fa-solid fa-bed"></i>
+        <p class="mb-0 small">Rooms</p>
+      </div>
+    </a>
+    <a href="/listings?category=Iconic+Cities" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Iconic Cities' ? 'active' : '' %>">
+        <i class="fa-solid fa-mountain-city"></i>
+        <p class="mb-0 small">Iconic Cities</p>
+      </div>
+    </a>
+    <a href="/listings?category=Mountains" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Mountains' ? 'active' : '' %>">
+        <i class="fa-solid fa-mountain"></i>
+        <p class="mb-0 small">Mountains</p>
+      </div>
+    </a>
+    <a href="/listings?category=Castles" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Castles' ? 'active' : '' %>">
+        <i class="fa-brands fa-fort-awesome"></i>
+        <p class="mb-0 small">Castles</p>
+      </div>
+    </a>
+    <a href="/listings?category=Amazing+Pools" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Amazing Pools' ? 'active' : '' %>">
+        <i class="fa-solid fa-person-swimming"></i>
+        <p class="mb-0 small">Amazing Pools</p>
+      </div>
+    </a>
+    <a href="/listings?category=Camping" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Camping' ? 'active' : '' %>">
+        <i class="fa-solid fa-campground"></i>
+        <p class="mb-0 small">Camping</p>
+      </div>
+    </a>
+    <a href="/listings?category=Farms" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Farms' ? 'active' : '' %>">
+        <i class="fa-solid fa-cow"></i>
+        <p class="mb-0 small">Farms</p>
+      </div>
+    </a>
+    <a href="/listings?category=Arctic" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Arctic' ? 'active' : '' %>">
+        <i class="fa-regular fa-snowflake"></i>
+        <p class="mb-0 small">Arctic</p>
+      </div>
+    </a>
+    <a href="/listings?category=Beachfront" class="filter-link text-decoration-none">
+      <div class="filter-item text-center <%= selectedCategory === 'Beachfront' ? 'active' : '' %>">
+        <i class="fa-solid fa-umbrella-beach"></i>
+        <p class="mb-0 small">Beachfront</p>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- Header / Status -->
+<% if(selectedCategory && selectedCategory !== 'Trending') { %>
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h5 class="fw-bold mb-0">Category: <span class="text-danger"><%= selectedCategory %></span> (<%= allListings.length %>)</h5>
+    <a href="/listings" class="btn btn-sm btn-outline-secondary rounded-pill">
+      <i class="fa-solid fa-xmark me-1"></i> Clear Filter
+    </a>
+  </div>
+<% } %>
+
+<!-- Listings Grid or Empty State -->
+<% if(allListings && allListings.length > 0) { %>
+  <div class="row row-cols-xxl-4 row-cols-lg-3 row-cols-md-2 row-cols-1 g-4">
+    <% for(let listing of allListings) { %>
+      <div class="col">
+        <a href="/listings/<%= listing._id %>" class="listing-link">
+          <div class="card listing-card h-100">
+            <div class="card-img-wrapper position-relative">
+              <img 
+                src="<%= listing.image && listing.image.url ? listing.image.url : (listing.image || 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=800&q=60') %>" 
+                class="card-img-top listing-img" 
+                alt="<%= listing.title %>"
+              >
+              <% if(listing.category) { %>
+                <span class="badge bg-white text-dark position-absolute top-0 start-0 m-2 shadow-sm rounded-pill px-2 py-1 small">
+                  <%= listing.category %>
+                </span>
+              <% } %>
+              <div class="card-img-overlay"></div>
+            </div>
+            <div class="card-body pt-3 pb-1">
+              <h6 class="card-title fw-bold text-dark text-truncate mb-1"><%= listing.title %></h6>
+              <p class="card-text text-muted small mb-2"><%= listing.location %>, <%= listing.country %></p>
+              <p class="card-price mb-0">
+                <span class="fw-bold text-dark">&#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : 'N/A' %></span>
+                <span class="text-secondary small"> / night</span>
+              </p>
+            </div>
           </div>
-        </div>
         </a>
-        <% } %>
+      </div>
+    <% } %>
+  </div>
+<% } else { %>
+  <div class="text-center py-5 my-5">
+    <div class="mb-3">
+      <i class="fa-solid fa-compass fs-1 text-muted"></i>
     </div>
-
-
-  </body>
-
-
+    <h4 class="fw-bold mb-2">No stays found in <%= selectedCategory %></h4>
+    <p class="text-muted mb-4">Try choosing another category or explore all available stays.</p>
+    <a href="/listings" class="btn btn-dark rounded-pill px-4 py-2">
+      <i class="fa-solid fa-globe me-1"></i> View All Listings
+    </a>
+  </div>
+<% } %>

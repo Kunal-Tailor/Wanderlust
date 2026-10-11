@@ -1,101 +1,347 @@
-body{
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+/* ==========================================================
+   Wanderlust - Global Styles & Design System
+   ========================================================== */
+
+:root {
+  --primary-color: #fe424d;
+  --primary-hover: #e0313c;
+  --text-primary: #222222;
+  --text-muted: #717171;
+  --bg-light: #f7f7f7;
+  --border-color: #ebebeb;
+  --font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.container{
-    flex: 1;
+body {
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
 }
 
-.navbar{
-    height:5rem;
-    background-color: white;
-
-}
-.fa-compass{
-    color: #fe424d;
-    font-size: 2rem;
-}
-.nav-link {
-    color: #222222 !important ;
-
-}
-.f-info-links a{
-    text-decoration: none;
-    color: #222222;
+main.container {
+  flex: 1 0 auto;
 }
 
-.f-info-links a:hover{
-    text-decoration: underline;
+/* ==========================================================
+   Navbar
+   ========================================================== */
+
+.navbar {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  z-index: 1000;
 }
 
-.f-info-links,.f-info-socials,.f-info-brand{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.brand-icon {
+  color: var(--primary-color);
+  font-size: 1.85rem;
+  transition: transform 0.2s ease;
 }
 
-
-.f-info-socials i{
-    margin-right: 1rem;
-    font-size: 1.2rem;
-
+.navbar-brand:hover .brand-icon {
+  transform: rotate(20deg);
 }
 
-.f-info{
-    text-align: center;
-    height: 8rem;
-    background-color: #ebebeb;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: space-evenly;
+.brand-title {
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.5px;
 }
 
-.card{
-    border: none !important;
-    margin-bottom: 2rem;
-
-}
-.card-img-top{
-    border-radius: 1rem !important;
-    width: 100% !important;
-    object-fit: cover !important;
-}
-.card-body{
-    padding: 0 !important;
-
-}
-.card-text{
-    font-weight: 400;
-}
-.listing-link{
-    text-decoration: none;
+.navbar .nav-link {
+  color: var(--text-primary) !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-radius: 2rem;
+  transition: all 0.2s ease;
 }
 
-.card-img-overlay{
-    opacity: 0;
-
-}
-.card-img-overlay:hover{
-    opacity: 0.2;
-    background-color: white;
+.navbar .nav-link:hover {
+  background-color: var(--bg-light);
+  color: var(--primary-color) !important;
 }
 
-.add-btn{
-    background-color: #fe424d;
-    border: 2px solid black !important;
-    border-radius: 4px;
+.nav-host-btn {
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  border-radius: 2rem !important;
+  transition: all 0.2s ease !important;
 }
-.show-img{
-    height: 30vh;
+
+.nav-host-btn:hover {
+  border-color: #b0b0b0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
-.btns{
-    display: flex;
+
+/* ==========================================================
+   Category Filter Bar
+   ========================================================== */
+
+.filter-scroll {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
-.show-card{
-    padding-left: 0;
-    padding-right: 0;
+
+.filter-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.filter-link {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: inline-block;
+}
+
+.filter-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.5rem;
+  padding-bottom: 0.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  opacity: 0.75;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.filter-item i {
+  font-size: 1.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.filter-item:hover {
+  color: var(--text-primary);
+  opacity: 1;
+  border-bottom-color: #b0b0b0;
+}
+
+.filter-item.active {
+  color: var(--text-primary);
+  opacity: 1;
+  border-bottom-color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ==========================================================
+   Listing Cards & Grid
+   ========================================================== */
+
+.listing-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.listing-card {
+  border: none !important;
+  background-color: transparent !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.listing-card:hover {
+  transform: translateY(-3px);
+}
+
+.card-img-wrapper {
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: #f0f0f0;
+}
+
+.listing-img {
+  height: 18rem;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 1rem !important;
+  transition: transform 0.35s ease;
+}
+
+.listing-card:hover .listing-img {
+  transform: scale(1.04);
+}
+
+.card-img-overlay {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card-img-overlay:hover {
+  opacity: 0.08;
+  background-color: #ffffff;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.card-price {
+  font-size: 0.95rem;
+}
+
+/* ==========================================================
+   Listing Show Page
+   ========================================================== */
+
+.show-card {
+  border: none !important;
+  background: transparent !important;
+}
+
+.show-img-wrapper {
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.show-img {
+  height: 420px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 1.25rem !important;
+}
+
+@media (max-width: 768px) {
+  .show-img {
+    height: 280px;
+  }
+}
+
+.listing-title {
+  font-size: 1.85rem;
+  letter-spacing: -0.5px;
+}
+
+.listing-desc {
+  font-size: 1.05rem;
+}
+
+/* ==========================================================
+   Buttons & Actions
+   ========================================================== */
+
+.add-btn,
+.edit-btn {
+  background-color: var(--primary-color) !important;
+  border: none !important;
+  color: #ffffff !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+.add-btn:hover,
+.edit-btn:hover {
+  background-color: var(--primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(254, 66, 77, 0.25);
+}
+
+.btn-dark {
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-outline-dark,
+.btn-outline-secondary {
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+/* ==========================================================
+   Form Controls
+   ========================================================== */
+
+.form-control,
+.form-select {
+  border-radius: 0.5rem;
+  border-color: #cccccc;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.95rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 1px var(--text-primary);
+}
+
+.form-range::-webkit-slider-thumb {
+  background: var(--primary-color);
+}
+
+.form-range::-moz-range-thumb {
+  background: var(--primary-color);
+}
+
+/* ==========================================================
+   Reviews
+   ========================================================== */
+
+.review-card {
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* ==========================================================
+   Map
+   ========================================================== */
+
+#map {
+  height: 400px;
+  width: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
+}
+
+.maplibregl-popup-content,
+.maptiler-popup-content {
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================
+   Footer
+   ========================================================== */
+
+.footer {
+  background-color: var(--bg-light) !important;
+  border-top: 1px solid var(--border-color) !important;
+  margin-top: auto;
+}
+
+.footer-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.social-icon {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.social-icon:hover {
+  color: var(--primary-color);
+  transform: translateY(-2px);
 }

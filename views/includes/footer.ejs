@@ -1,14 +1,14 @@
-<footer>
-    <div class="f-info">
-        <div class="f-info-socials">
-            <i class="fa-brands fa-facebook"></i>
-            <i class="fa-brands fa-square-instagram"></i>
-            <i class="fa-brands fa-linkedin"></i>
-        </div>
-        <div class="f-info-brand">&copy; Wanderlust Private Limited</div>
-        <div class="f-info-links">
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
-        </div>
+<footer class="footer border-top mt-auto py-4 bg-light">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+    <div class="f-info-brand text-muted small order-2 order-md-1">
+      &copy; <%= new Date().getFullYear() %> Wanderlust, Inc. &middot; 
+      <a href="#" class="footer-link">Privacy</a> &middot; 
+      <a href="#" class="footer-link">Terms</a>
     </div>
+    <div class="f-info-socials d-flex gap-3 order-1 order-md-2">
+      <a href="#" class="social-icon" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#" class="social-icon" aria-label="Instagram"><i class="fa-brands fa-square-instagram"></i></a>
+      <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+    </div>
+  </div>
 </footer>

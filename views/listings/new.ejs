@@ -1,67 +1,125 @@
 <% layout("/layouts/boilerplate.ejs")%>
-<div class="row mt-3">
-  <div class="col-8 offset-2">
-    <br><br>
-    <h3>Create a New Listing</h3>
-    <form method="POST" action="/listings " novalidate class="needs-validation">
+
+<div class="row justify-content-center mt-3 mb-5">
+  <div class="col-12 col-md-10 col-lg-8">
+    
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div>
+        <h2 class="fw-bold mb-1">Create a New Listing</h2>
+        <p class="text-muted small mb-0">Share your property with travelers around the world</p>
+      </div>
+      <a href="/listings" class="btn btn-outline-secondary btn-sm">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back
+      </a>
+    </div>
+
+    <form method="POST" action="/listings" novalidate class="needs-validation">
+      
       <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-      <input name="listing[title]" placeholder="enter title" type="text"  class="form-control" required/>
-      <div class="valid-feedback">Title looks good</div>
+        <label for="title" class="form-label fw-semibold">Title</label>
+        <input 
+          id="title"
+          name="listing[title]" 
+          placeholder="e.g. Luxury Beachfront Villa" 
+          type="text"  
+          class="form-control" 
+          required
+        />
+        <div class="valid-feedback">Title looks great!</div>
+        <div class="invalid-feedback">Please enter a descriptive title.</div>
       </div>
       
-       
       <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
+        <label for="description" class="form-label fw-semibold">Description</label>
         <textarea
-        name="listing[description]"
-       class="form-control" required
-      ></textarea>
-      <div class="invalid-feedback">Please enter description</div>
+          id="description"
+          name="listing[description]"
+          rows="4"
+          placeholder="Describe your place, amenities, and surroundings..."
+          class="form-control" 
+          required
+        ></textarea>
+        <div class="invalid-feedback">Please enter a description for your listing.</div>
       </div>
 
       <div class="mb-3">
-        <label for="image" class="form-label">Image Link</label>
+        <label for="image" class="form-label fw-semibold">Image URL</label>
         <input
-        name="listing[image]"
-        placeholder="enter image URL/Link"
-        type="text" class="form-control"
-      />
+          id="image"
+          name="listing[image]"
+          placeholder="https://example.com/photo.jpg"
+          type="url" 
+          class="form-control"
+        />
+        <div class="form-text">Provide an image URL to showcase your property.</div>
       </div>
       
       <div class="row">
         <div class="mb-3 col-md-4">
-          <label for="price" class="form-label">Price </label>
-        <input name="listing[price]" placeholder="enter price"  class="form-control" required/>
-        <div class="invalid-feedback">Please enter valid price</div>
+          <label for="price" class="form-label fw-semibold">Price per night (&#8377;)</label>
+          <input 
+            id="price"
+            name="listing[price]" 
+            placeholder="1200"  
+            type="number"
+            min="0"
+            class="form-control" 
+            required
+          />
+          <div class="invalid-feedback">Please enter a valid price.</div>
         </div>
         
-        <div class="mb-3 col-md-8">
-          <label for="country" class="form-label">Country</label>
-          <input name="listing[country]" placeholder="enter country" type="text" class="form-control" required/>
-          <div class="invalid-feedback">Please enter the country name</div>
-  
+        <div class="mb-3 col-md-4">
+          <label for="country" class="form-label fw-semibold">Country</label>
+          <input 
+            id="country"
+            name="listing[country]" 
+            placeholder="e.g. India, United States" 
+            type="text" 
+            class="form-control" 
+            required
+          />
+          <div class="invalid-feedback">Please enter the country.</div>
+        </div>
+
+        <div class="mb-3 col-md-4">
+          <label for="category" class="form-label fw-semibold">Category</label>
+          <select id="category" name="listing[category]" class="form-select" required>
+            <option value="Trending">Trending</option>
+            <option value="Rooms">Rooms</option>
+            <option value="Iconic Cities">Iconic Cities</option>
+            <option value="Mountains">Mountains</option>
+            <option value="Castles">Castles</option>
+            <option value="Amazing Pools">Amazing Pools</option>
+            <option value="Camping">Camping</option>
+            <option value="Farms">Farms</option>
+            <option value="Arctic">Arctic</option>
+            <option value="Beachfront">Beachfront</option>
+          </select>
+          <div class="invalid-feedback">Please select a category.</div>
         </div>
       </div>
       
-      
-      <div class="mb-3">
-        <label for="location" class="form-label">Location</label>
+      <div class="mb-4">
+        <label for="location" class="form-label fw-semibold">Location / City</label>
         <input
-        name="listing[location]"
-        placeholder="enter location"
-        type="text" class="form-control" required
-      />
-      <div class="invalid-feedback">Location should be valid</div>
-
+          id="location"
+          name="listing[location]"
+          placeholder="e.g. Calangute, Goa"
+          type="text" 
+          class="form-control" 
+          required
+        />
+        <div class="invalid-feedback">Please enter a valid location.</div>
       </div>
-      
-      
-      
-      <br /><br />
-      <button class="add-btn mt-3">Add</button>
-      <br><br>
+
+      <div class="d-flex align-items-center gap-3 pt-2">
+        <button type="submit" class="btn add-btn px-4 py-2">
+          <i class="fa-solid fa-plus me-1"></i> Create Listing
+        </button>
+        <a href="/listings" class="btn btn-outline-secondary px-4 py-2">Cancel</a>
+      </div>
+
     </form>
   </div>
 </div>
- 

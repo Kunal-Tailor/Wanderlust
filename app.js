@@ -1,135 +1,73 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
-const ejsMate=require("ejs-mate")
-const wrapAsync=require("./utils/wrapAsync.js")
-const ExpressError=require("./utils/ExpressError.js")
-const {listingSchema}=require("./schema.js")
-const Review = require("./models/reviews.js");
+const ejsMate = require("ejs-mate");
+const ExpressError = require("./utils/ExpressError.js");
 
+const listingRouter = require("./routes/listing.js");
+const reviewRouter = require("./routes/review.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLASDB_URL || process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
 main()
   .then(() => {
-    console.log("connected to DB");
+    console.log("Connected to DB");
   })
   .catch((err) => {
-    console.log(err);
+    console.log("Database connection error:", err);
   });
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
 }
 
+// App configuration
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-app.engine('ejs',ejsMate);
+app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+// Pass mapToken to all views
+app.use((req, res, next) => {
+  res.locals.mapToken = process.env.MAP_TOKEN || process.env.MAPTILER_API_KEY;
+  next();
+});
 
+// Root Route - Redirect to /listings
 app.get("/", (req, res) => {
-  res.send("Hi, I am root");
-});
-
-//Index Route
-app.get("/listings", wrapAsync(async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render("listings/index.ejs", { allListings });
-}));
-
-//New Route
-app.get("/listings/new", (req, res) => {
-  res.render("listings/new.ejs");
-});
-
-//Show Route
-app.get("/listings/:id", wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  const listing = await Listing.findById(id);
-  res.render("listings/show.ejs", { listing });
-}));
-
-//Create Route
-app.post("/listings", wrapAsync(async (req, res) => {
-  let result=listingSchema.validate(req.body);
-  console.log(result);
-  const newListing = new Listing(req.body.listing);
-  await newListing.save();
   res.redirect("/listings");
-}));
-
-//Edit Route
-app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  const listing = await Listing.findById(id);
-  res.render("listings/edit.ejs", { listing });
-}));
-
-//Update Route
-app.put("/listings/:id", wrapAsync(async (req, res) => {
-  if(!req.body.listing){
-    throw new ExpressError(400,"send valid data ")
-  }
-  let { id } = req.params;
-  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-  res.redirect(`/listings/${id}`);
-}));
-
-//Delete Route
-app.delete("/listings/:id", wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  let deletedListing = await Listing.findByIdAndDelete(id);
-  console.log(deletedListing);
-  res.redirect("/listings");
-}));
-
-//rev
-app.post("/listings/:id/reviews",async(req,res)=>{
-  let listing=await Listing.findById(req.params.id);
-  let newReview=new Review(req.body.review);
-
-  listing.reviews.push(newReview);
-
-  await newReview.save();
-  await listing.save();
-
-  console.log();
-  res.send();
-
-  res.redirect(`/listings/${listing._id}`)
-})
-
-// app.get("/testListing", async (req, res) => {
-//   let sampleListing = new Listing({
-//     title: "My New Villa",
-//     description: "By the beach",
-//     price: 1200,
-//     location: "Calangute, Goa",
-//     country: "India",
-//   });
-
-//   await sampleListing.save();
-//   console.log("sample was saved");
-//   res.send("successful testing");
-// });
-
-app.all("*",(req,res,next)=>{
-  next(new ExpressError(404,"page Not Found!"));
-})
-
-app.use((err,req,res,next)=>{
-  let{statusCode=500,message="wrong gone"}=err;
-  res.render("error.ejs",{message});
-  // res.status(statusCode).send(message);
-
-})
-
-app.listen(8088, () => {
-  console.log("server is listening to port 8088");
 });
+
+// Mount Routers
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewRouter);
+
+// 404 Handler
+app.all("*", (req, res, next) => {
+  next(new ExpressError(404, "Page Not Found!"));
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  let { statusCode = 500, message = "Something went wrong" } = err;
+  res.status(statusCode).render("error.ejs", { message });
+});
+
+// Start server locally or in non-serverless environments
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  const port = process.env.PORT || 8088;
+  app.listen(port, () => {
+    console.log(`Server is listening on port ${port}`);
+  });
+}
+
+// Export for Vercel serverless deployment
+module.exports = app;

@@ -1,44 +1,166 @@
 <% layout("/layouts/boilerplate.ejs")%>
-<div class="row mt-3">
-  <div class="col-8 offset-3">
 
-    <h3><%= listing.title %></h3>
+<div class="row justify-content-center mt-3 mb-5">
+  <div class="col-12 col-md-10 col-lg-8">
+
+    <!-- Listing Header -->
+    <div class="mb-3">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1">
+        <h2 class="listing-title fw-bold mb-0"><%= listing.title %></h2>
+        <% if(listing.category) { %>
+          <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+            <i class="fa-solid fa-tag me-1 text-danger"></i> <%= listing.category %>
+          </span>
+        <% } %>
+      </div>
+      <p class="text-muted mb-0">
+        <i class="fa-solid fa-location-dot text-danger me-1"></i>
+        <%= listing.location %>, <%= listing.country %>
+      </p>
+    </div>
+
+    <!-- Main Listing Card -->
+    <div class="show-card card border-0 mb-3">
+      <div class="show-img-wrapper position-relative">
+        <img 
+          src="<%= listing.image && listing.image.url ? listing.image.url : (listing.image || 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=800&q=60') %>" 
+          class="card-img-top show-img" 
+          alt="<%= listing.title %>"
+        >
+      </div>
+      <div class="card-body px-0 pt-3">
+        <div class="d-flex align-items-baseline gap-2 mb-3">
+          <span class="fs-4 fw-bold text-dark">&#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : 'N/A' %></span>
+          <span class="text-secondary">/ night</span>
+        </div>
+        <p class="listing-desc text-secondary lh-lg mb-0">
+          <%= listing.description %>
+        </p>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <a href="/listings/<%= listing._id %>/edit" class="btn edit-btn px-4">
+        <i class="fa-regular fa-pen-to-square me-1"></i> Edit
+      </a>
+      <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="d-inline m-0">
+        <button class="btn btn-dark px-4">
+          <i class="fa-regular fa-trash-can me-1"></i> Delete
+        </button>
+      </form>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Existing Reviews (if any) -->
+    <% if(listing.reviews && listing.reviews.length > 0) { %>
+      <div class="mb-4">
+        <h5 class="fw-bold mb-3">Guest Reviews (<%= listing.reviews.length %>)</h5>
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+          <% for(let review of listing.reviews) { %>
+            <div class="col">
+              <div class="card review-card h-100 p-3 border rounded-3 bg-white">
+                <div class="card-body p-0">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fa-solid fa-circle-user fs-4 text-secondary"></i>
+                    <div>
+                      <span class="fw-semibold small d-block">Guest Review</span>
+                      <span class="text-muted" style="font-size: 0.75rem;">
+                        <%= review.createdAt ? new Date(review.createdAt).toLocaleDateString() : '' %>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="text-warning small mb-2">
+                    <% for(let i = 1; i <= 5; i++) { %>
+                      <i class="fa-<%= i <= review.rating ? 'solid' : 'regular' %> fa-star"></i>
+                    <% } %>
+                  </div>
+                  <p class="card-text text-secondary small mb-0"><%= review.comment %></p>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Review Form -->
+    <div class="card p-4 border rounded-3 bg-light-subtle mb-4">
+      <h5 class="fw-bold mb-3">Leave a Review</h5>
+      <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+        <div class="mb-3">
+          <label for="rating" class="form-label fw-semibold small">Rating: <span id="ratingVal" class="text-danger fw-bold">3</span> / 5</label>
+          <input type="range" min="1" max="5" value="3" id="rating" name="review[rating]" class="form-range" oninput="document.getElementById('ratingVal').innerText = this.value">
+        </div>
+        <div class="mb-3">
+          <label for="comment" class="form-label fw-semibold small">Comments</label>
+          <textarea name="review[comment]" id="comment" cols="30" rows="3" class="form-control" placeholder="Share your experience with other guests..." required></textarea>
+          <div class="invalid-feedback">Please share a review comment.</div>
+        </div>
+        <div>
+          <button class="btn btn-outline-dark px-4">Submit Review</button>
+        </div>
+      </form>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Map Section -->
+    <div class="map-section mb-4">
+      <h4 class="fw-bold mb-2">Where you'll be</h4>
+      <p class="text-muted mb-3">
+        <i class="fa-solid fa-map-pin text-danger me-1"></i>
+        <%= listing.location %>, <%= listing.country %>
+      </p>
+      <div id="map"></div>
+    </div>
+
   </div>
-    <div class="card col-6 offset-3 show-card">
-        <img src="<%=listing.image.link%>" class="card-img-top show-img" alt="listing_image">
-        <div class="card-body">
-          
-          <%= listing.description %> <br>
-          <%= listing.price.toLocaleString("en-IN") %> <br>
-          <%= listing.location %> <br>
-          <%= listing.country %>
-        </div>
-    </div>
-   
-    <br />
-    <div class="btns">
-      <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-1 offset-3" >Edit</a>
-
-      <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
-        <button class="btn btn-dark offset-5">Delete</button>
-      </form>
-    </div>
-    <hr>
-    <div class="col-8 offset-3 mb-3">
-      <h4>Leave a Review</h4>
-      <form action="/listing/<%=listing.id%>/reviews" method="POST">
-        <div class="mb-3 mt-3">
-          <label for="rating" class="form-label">Rating</label>
-          <input type="range" min="1" max="5" id="rating" name="review[rating]" class="form-range">
-        </div>
-        <div class="mb-3 mt-3">
-          <label for="comment" class="form-label">Comments</label>
-          <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control"></textarea>
-        </div>
-        <button class="btn btn-outline-dark">Submit</button>
-      </form>
-    </div>
- 
-
 </div>
- 
+
+<script>
+  const mapToken = "<%= mapToken %>";
+  maptilersdk.config.apiKey = mapToken;
+
+  const listingLocation = "<%= listing.location %>, <%= listing.country %>";
+  const listingTitle = "<%= listing.title %>";
+
+  // Initialize map with default center
+  const map = new maptilersdk.Map({
+    container: 'map',
+    style: maptilersdk.MapStyle.STREETS,
+    center: [0, 20],
+    zoom: 2
+  });
+
+  // Geocode the listing location and add marker
+  async function initMap() {
+    try {
+      const response = await fetch(
+        `https://api.maptiler.com/geocoding/${encodeURIComponent(listingLocation)}.json?key=${mapToken}`
+      );
+      const data = await response.json();
+
+      if (data.features && data.features.length > 0) {
+        const coordinates = data.features[0].geometry.coordinates; // [lng, lat]
+
+        map.flyTo({ center: coordinates, zoom: 10 });
+
+        const marker = new maptilersdk.Marker({ color: "#fe424d" })
+          .setLngLat(coordinates)
+          .setPopup(
+            new maptilersdk.Popup({ offset: 25 })
+              .setHTML(`<h6 class="fw-bold mb-1">${listingTitle}</h6><p class="mb-0 text-muted small">${listingLocation}</p>`)
+          )
+          .addTo(map);
+
+        marker.togglePopup();
+      }
+    } catch (err) {
+      console.error("Geocoding error:", err);
+    }
+  }
+
+  map.on('load', initMap);
+</script>
